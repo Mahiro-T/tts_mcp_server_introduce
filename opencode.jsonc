@@ -1,0 +1,59 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "tts-generate": {
+      "type": "remote",
+      "url": "http://127.0.0.1:8000/mcp",
+      "enabled": true,
+    },
+  },
+  "agent": {
+    "top": {
+      "description": "Orchestrates video creation tasks by coordinating tts-worker and worker agents",
+      "mode": "primary",
+      "prompt": "You are a task orchestrator for video creation. Coordinate between tts-worker for TTS generation and worker for video editing. Break down video creation requests into clear tasks and delegate appropriately. Monitor progress and ensure all steps are completed in the correct order.",
+      "tools": {
+        "read": true,
+        "write": false,
+        "edit": false,
+        "bash": true,
+        "webfetch": true,
+        "glob": true,
+        "grep": true,
+      },
+      "permission": {
+        "task": {
+          "*": "allow",
+        },
+      },
+    },
+    "tts-worker": {
+      "description": "Handles text-to-speech generation using MCP tools",
+      "mode": "subagent",
+      "prompt": "You are a TTS specialist. Use the tts-generate MCP tools to convert text to speech. Generate audio files and track task status until completion. Return the audio file paths for use in video creation.　You must add language and voice parameters to the tts-generate command.",
+      "tools": {
+        "tts-generate_*": true,
+      },
+      "permission": {
+        "bash": "deny",
+        "write": "deny",
+        "edit": "deny",
+      },
+    },
+    "worker": {
+      "description": "Handles video editing and creation tasks using Remotion",
+      "mode": "subagent",
+      "prompt": "You are a video editing specialist. Use Remotion to create and edit videos. Work with audio files provided by tts-worker and incorporate them into video compositions. Handle video rendering, composition setup, and export tasks.",
+      "tools": {
+        "read": true,
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "webfetch": true,
+      },
+      "permission": {
+        "tts-generate_*": "deny",
+      },
+    },
+  },
+}

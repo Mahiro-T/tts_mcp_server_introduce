@@ -11,3 +11,7 @@ import { enableTailwind } from '@remotion/tailwind-v4';
 Config.setVideoImageFormat("jpeg");
 Config.setOverwriteOutput(true);
 Config.overrideWebpackConfig(enableTailwind);
+
+// 音品質設定（音声が含まれる場合）
+Config.setAudioCodec("aac");
+Config.setAudioBitrate("128k");
